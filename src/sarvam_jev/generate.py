@@ -85,9 +85,13 @@ def build_prompt(state, criteria: list[dict]) -> str:
     parts = [GENERATION_INSTRUCTION, ""]
     for example in FEWSHOT:
         answer = {item["key"]: item["answer"] for item in example["criteria"]}
+        # Compact separators, matching JSON.stringify in browser/worker.js. Python's
+        # default spaces after the colons would demonstrate a wordier format to the
+        # server's baseline than the browser's sees, costing it tokens for nothing and
+        # making the two demos' ratios incomparable.
         parts.append(
             _render(example["state"], example["criteria"])
-            + " " + json.dumps(answer, ensure_ascii=False) + "\n"
+            + " " + json.dumps(answer, ensure_ascii=False, separators=(",", ":")) + "\n"
         )
     parts.append(_render(state, criteria))
     return "\n".join(parts)
