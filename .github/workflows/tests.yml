@@ -26,8 +26,9 @@ jobs:
           path: ~/.cache/huggingface
           key: hf-sarvam-1-tokenizer-v1
 
-      # Deliberately not `pip install -e .`: that pins torch, which is an ~800 MB
-      # download these tests never import. Only the tokenizer stack is needed.
+      # Deliberately NOT `uv sync`: that installs torch, an ~800 MB download these
+      # tests never import, because every torch import in the package is inside a
+      # function. Only the tokenizer stack is needed here.
       - name: Install test dependencies
         run: pip install "transformers==5.17.0" sentencepiece protobuf pytest
 

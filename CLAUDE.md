@@ -18,8 +18,14 @@ what would be included — just never take the next step.
 
 ## Environment
 
-- System Python is 3.14 and cannot install torch. The project venv is `.venv` (Python 3.12,
-  created with `uv`). Always invoke it explicitly: `.venv/bin/python`, `.venv/bin/pytest`.
+- System Python is 3.14 and cannot install torch. The project is managed with `uv` against a
+  Python 3.12 `.venv`. Use `uv run <command>` — it resolves against `pyproject.toml` and
+  `uv.lock`, so the environment cannot drift from what is declared.
+- Everything the project needs is declared: runtime deps in `[project.dependencies]` (the demo
+  server included, deliberately not behind an extra), and `pytest`, `playwright`,
+  `llama-cpp-python` and `gguf` in `[dependency-groups] dev`, which `uv run` installs by
+  default. Do not `uv pip install` into `.venv` ad hoc — an undeclared package is one
+  `uv sync` away from being removed.
 - One CUDA device (RTX 3060, 12GB). sarvam-1 in bf16 fits with room to spare; nothing larger
   in the Sarvam family does, even 4-bit.
 - `reference/` holds clones of other people's projects for comparison. It is gitignored and
@@ -28,9 +34,11 @@ what would be included — just never take the next step.
 ## Commands
 
 ```bash
-.venv/bin/python -m pytest tests/ -q                                  # tokenizer-level, no GPU
-.venv/bin/python -m uvicorn server.app:app --host 127.0.0.1 --port 8000   # demo UI
-.venv/bin/python bench/phase0.py --model sarvamai/sarvam-1 \
+uv run pytest tests/ -q                                                # tokenizer-level, no GPU
+uv run uvicorn server.app:app --host 127.0.0.1 --port 8000             # server demo
+cd browser && python3 -m http.server 8092                              # browser demo (static)
+
+uv run python bench/phase0.py --model sarvamai/sarvam-1 \
   --input reference/openjev/benchmarks/data/authored144.jsonl \
   --output results/local/<new-name>.json
 ```

@@ -62,14 +62,13 @@ symptom of the uncalibrated model, and phase 3 should fix it too.
 ## Quick start
 
 ```bash
-uv venv --python 3.12 .venv
-VIRTUAL_ENV=.venv uv pip install -e '.[serve,test]'
+uv sync          # creates .venv from pyproject.toml + uv.lock
 ```
 
 Score a labelled fixture and print the headline metric:
 
 ```bash
-.venv/bin/python bench/phase0.py \
+uv run python bench/phase0.py \
   --model sarvamai/sarvam-1 \
   --input reference/openjev/benchmarks/data/authored144.jsonl \
   --output results/local/phase0-sarvam1.json
@@ -95,7 +94,7 @@ was verified before shipping it.
 ### Run the server demo
 
 ```bash
-.venv/bin/python -m uvicorn server.app:app --host 127.0.0.1 --port 8000
+uv run uvicorn server.app:app --host 127.0.0.1 --port 8000
 ```
 
 Then open `http://127.0.0.1:8000`. It is a split screen: the left lane reads typed
@@ -125,7 +124,7 @@ precaution for the same reason.
 Score JSONL directly:
 
 ```bash
-.venv/bin/python -m sarvam_jev.cli --mode shared \
+uv run python -m sarvam_jev.cli --mode shared \
   --model sarvamai/sarvam-1 --input decisions.jsonl --output out.jsonl
 ```
 

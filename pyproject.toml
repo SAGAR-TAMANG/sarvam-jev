@@ -17,11 +17,23 @@ dependencies = [
   "sentencepiece",
   "protobuf",
   "numpy",
+  # The demo server is part of the project, not an optional extra: leaving these
+  # behind an extra means `uv run` uninstalls them.
+  "fastapi",
+  "uvicorn",
+  "pydantic",
 ]
 
-[project.optional-dependencies]
-serve = ["fastapi", "uvicorn", "pydantic"]
-test = ["pytest"]
+# Installed by `uv sync` and `uv run` by default. llama-cpp-python is needed by
+# bench/quantization.py to score GGUF builds, and playwright drives the browser
+# checks; neither belongs in a runtime install.
+[dependency-groups]
+dev = [
+  "pytest",
+  "playwright",
+  "llama-cpp-python",
+  "gguf",
+]
 
 [project.scripts]
 sarvam-jev-score = "sarvam_jev.cli:main"
