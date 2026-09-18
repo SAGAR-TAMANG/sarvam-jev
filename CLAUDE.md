@@ -46,6 +46,10 @@ path. Use a new filename rather than deleting the old one.
   committed row-level file under `results/raw/`. If a number changes, regenerate the evidence.
 - Do not hand the autoregressive baseline a worse prompt than the readout gets. Both paths use
   the same `q1..qN` key convention and the same few-shot format; an unfair baseline produced a
-  flattering 9.1x that turned out to be 5.7x once corrected.
+  flattering 9.1x that turned out to be 5.7x once corrected. "Same settings" is not the same as
+  "fair": the readout's output shape is enforced structurally by the grammar and answer slots,
+  so dropping few-shot demonstrations costs it almost nothing while leaving generation unable to
+  guess the key convention at all. The baseline therefore always gets at least one worked
+  example, even when the readout gets none.
 - Don't guess at UI rendering. Screenshot it. Two shipped-looking bugs (invisible probability
   bars, Devanagari falling back to tofu) were only visible in a render.

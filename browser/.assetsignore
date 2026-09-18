@@ -1,4 +1,10 @@
 # Config and housekeeping files that live here but must not be served.
+# _headers is deliberately absent: Cloudflare parses it and never serves it, and
+# it is what grants this page cross-origin isolation.
 wrangler.jsonc
 .assetsignore
 .nojekyll
+
+# Wrangler's own scratch directory. Without this its no-op worker shim is uploaded
+# and served publicly, as seen in the first deploy.
+.wrangler

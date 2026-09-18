@@ -1,7 +1,7 @@
 [
   {
     "id": "support_hi",
-    "title": "Support triage — Hindi",
+    "title": "Support triage, 10 — Hindi",
     "language": "hi",
     "state": "टिकट #INC-4021\nग्राहक: मीना शर्मा (प्रीमियम प्लान, 3 साल से)\nविषय: भुगतान हो गया लेकिन ऑर्डर कन्फ़र्म नहीं हुआ\n\nविवरण: मैंने कल रात UPI से ₹4,250 का भुगतान किया। बैंक से पैसे कट गए और मुझे SMS भी मिला, लेकिन ऐप में ऑर्डर अब भी \"पेंडिंग\" दिखा रहा है। कस्टमर केयर पर दो बार कॉल किया, कोई जवाब नहीं मिला। मुझे या तो ऑर्डर चाहिए या तुरंत रिफ़ंड।\n\nभुगतान संदर्भ: UPI/4429183302\nऐप वर्ज़न: 8.2.1 (Android)",
     "criteria": [
@@ -93,12 +93,97 @@
             "description": "नहीं, रिफ़ंड की आवश्यकता नहीं"
           }
         ]
+      },
+      {
+        "question": "क्या ग्राहक पहले भी इस बारे में संपर्क कर चुका है?",
+        "options": [
+          {
+            "id": "yes",
+            "description": "हाँ"
+          },
+          {
+            "id": "no",
+            "description": "नहीं"
+          }
+        ]
+      },
+      {
+        "question": "इस शिकायत की श्रेणी क्या है?",
+        "options": [
+          {
+            "id": "payment",
+            "description": "भुगतान विफलता"
+          },
+          {
+            "id": "order",
+            "description": "ऑर्डर समस्या"
+          },
+          {
+            "id": "app",
+            "description": "ऐप में खराबी"
+          },
+          {
+            "id": "account",
+            "description": "खाता समस्या"
+          }
+        ]
+      },
+      {
+        "question": "क्या ग्राहक को मुआवज़ा या कूपन देना चाहिए?",
+        "options": [
+          {
+            "id": "yes",
+            "description": "हाँ, दें"
+          },
+          {
+            "id": "review",
+            "description": "समीक्षा के बाद"
+          },
+          {
+            "id": "no",
+            "description": "नहीं"
+          }
+        ]
+      },
+      {
+        "question": "पहली प्रतिक्रिया कितनी जल्दी दी जानी चाहिए?",
+        "options": [
+          {
+            "id": "h1",
+            "description": "1 घंटे के भीतर"
+          },
+          {
+            "id": "h4",
+            "description": "4 घंटे के भीतर"
+          },
+          {
+            "id": "h24",
+            "description": "24 घंटे के भीतर"
+          }
+        ]
+      },
+      {
+        "question": "क्या यह दावा साक्ष्य से समर्थित है: ऑर्डर की पुष्टि हो चुकी है?",
+        "options": [
+          {
+            "id": "supported",
+            "description": "साक्ष्य दावे को स्थापित करता है"
+          },
+          {
+            "id": "insufficient",
+            "description": "साक्ष्य पर्याप्त नहीं"
+          },
+          {
+            "id": "contradicted",
+            "description": "साक्ष्य विपरीत स्थापित करता है"
+          }
+        ]
       }
     ]
   },
   {
-    "id": "triage_hi_20",
-    "title": "Enterprise triage, 20 criteria — Hindi",
+    "id": "triage_hi_30",
+    "title": "Enterprise triage, 30 — Hindi",
     "language": "hi",
     "state": "टिकट #INC-77310\nग्राहक: वर्धमान लॉजिस्टिक्स प्रा. लि. (एंटरप्राइज़ अनुबंध, वार्षिक मूल्य ₹1.2 करोड़)\nसंपर्क: नेहा अग्रवाल, प्रौद्योगिकी प्रमुख\nविषय: गंभीर — शिपमेंट ट्रैकिंग API पिछले 2 घंटे से बंद\n\nविवरण: हमारा पूरा ट्रैकिंग डैशबोर्ड बंद पड़ा है। आपका /v3/shipments एंडपॉइंट हर अनुरोध पर 503 लौटा रहा है। इस समय हमारे 4,200 सक्रिय शिपमेंट हैं और ग्राहक लगातार कॉल कर रहे हैं। हमारी कॉल सेंटर टीम कुछ नहीं बता पा रही।\n\nसाथ ही, पिछले महीने का बिल ₹2,40,000 अधिक आया है — हमें 8 लाख API कॉल का बिल भेजा गया जबकि हमारे लॉग में 5.2 लाख दर्ज हैं। इस पर मैंने 11 दिन पहले टिकट #BIL-9920 खोला था, अब तक कोई उत्तर नहीं।\n\nयदि यह आज शाम तक ठीक नहीं होता तो हम अनुबंध की समीक्षा के लिए विवश होंगे। हमारे कानूनी विभाग को सूचित कर दिया गया है।\n\nपरिवेश: उत्पादन (production)\nक्षेत्र: ap-south-1\nप्रभावित उपयोगकर्ता: लगभग 380\nस्थिति पृष्ठ: अद्यतन नहीं किया गया",
     "criteria": [
@@ -425,12 +510,163 @@
             "description": "नहीं"
           }
         ]
+      },
+      {
+        "question": "क्या यह एक सुरक्षा घटना भी है?",
+        "options": [
+          {
+            "id": "yes",
+            "description": "हाँ"
+          },
+          {
+            "id": "no",
+            "description": "नहीं"
+          }
+        ]
+      },
+      {
+        "question": "क्या ग्राहक का डेटा प्रभावित हुआ है?",
+        "options": [
+          {
+            "id": "yes",
+            "description": "हाँ"
+          },
+          {
+            "id": "no",
+            "description": "नहीं"
+          },
+          {
+            "id": "unknown",
+            "description": "ज्ञात नहीं"
+          }
+        ]
+      },
+      {
+        "question": "इस ग्राहक से संवाद किस भाषा में होना चाहिए?",
+        "options": [
+          {
+            "id": "hi",
+            "description": "हिन्दी"
+          },
+          {
+            "id": "en",
+            "description": "अंग्रेज़ी"
+          },
+          {
+            "id": "both",
+            "description": "दोनों"
+          }
+        ]
+      },
+      {
+        "question": "क्या सार्वजनिक स्थिति पृष्ठ तुरंत अद्यतन करना चाहिए?",
+        "options": [
+          {
+            "id": "yes",
+            "description": "हाँ"
+          },
+          {
+            "id": "no",
+            "description": "नहीं"
+          }
+        ]
+      },
+      {
+        "question": "अनुबंध नवीनीकरण पर जोखिम कितना है?",
+        "options": [
+          {
+            "id": "high",
+            "description": "अधिक"
+          },
+          {
+            "id": "medium",
+            "description": "मध्यम"
+          },
+          {
+            "id": "low",
+            "description": "कम"
+          }
+        ]
+      },
+      {
+        "question": "किस सहायता स्तर पर समाधान अपेक्षित है?",
+        "options": [
+          {
+            "id": "l1",
+            "description": "स्तर 1"
+          },
+          {
+            "id": "l2",
+            "description": "स्तर 2"
+          },
+          {
+            "id": "l3",
+            "description": "स्तर 3 — इंजीनियरिंग"
+          }
+        ]
+      },
+      {
+        "question": "क्या कोई अस्थायी समाधान उपलब्ध कराया जा सकता है?",
+        "options": [
+          {
+            "id": "yes",
+            "description": "हाँ"
+          },
+          {
+            "id": "no",
+            "description": "नहीं"
+          }
+        ]
+      },
+      {
+        "question": "क्या इस टिकट के लिए समर्पित युद्ध-कक्ष बनाना चाहिए?",
+        "options": [
+          {
+            "id": "yes",
+            "description": "हाँ"
+          },
+          {
+            "id": "no",
+            "description": "नहीं"
+          }
+        ]
+      },
+      {
+        "question": "ग्राहक पर व्यावसायिक प्रभाव कितना गंभीर है?",
+        "options": [
+          {
+            "id": "severe",
+            "description": "गंभीर"
+          },
+          {
+            "id": "moderate",
+            "description": "मध्यम"
+          },
+          {
+            "id": "minor",
+            "description": "मामूली"
+          }
+        ]
+      },
+      {
+        "question": "क्या कानूनी टीम को अभी शामिल करना चाहिए?",
+        "options": [
+          {
+            "id": "yes",
+            "description": "हाँ"
+          },
+          {
+            "id": "no",
+            "description": "नहीं"
+          }
+        ]
       }
-    ]
+    ],
+    "note": "Desktop preset. Thirty decisions over one ticket: the readout's cost per decision falls as the shared state is amortised, while generation pays for every answer it writes. Slow on a phone -- try a ten-criterion example there instead."
   },
   {
     "id": "loan_ta",
-    "title": "Loan document review — Tamil",
+    "title": "Loan document review, 10 — Tamil",
     "language": "ta",
     "state": "கடன் விண்ணப்பம் #LN-88214\nவிண்ணப்பதாரர்: ஆர். கார்த்திகேயன், வயது 34, கோயம்புத்தூர்\nகோரிய தொகை: ₹6,00,000 (தனிநபர் கடன், 48 மாதங்கள்)\n\nசமர்ப்பிக்கப்பட்ட ஆவணங்கள்: ஆதார், பான் கார்டு, கடந்த 6 மாத வங்கிக் கணக்கு அறிக்கை, படிவம் 16.\nசமர்ப்பிக்கப்படாதவை: தற்போதைய முகவரிச் சான்று.\n\nமாத வருமானம்: ₹72,000 (சம்பளம், தனியார் நிறுவனம், 4 ஆண்டுகள் பணி)\nதற்போதைய EMI சுமை: ₹18,500 (வாகனக் கடன், 22 மாதங்கள் மீதம்)\nCIBIL மதிப்பெண்: 761\nகடந்த 24 மாதங்களில் தாமதமான தவணைகள்: 1 (14 நாட்கள், 2024இல்)",
     "criteria": [
@@ -497,12 +733,110 @@
             "description": "மேலாளர் ஒப்புதல் தேவையில்லை"
           }
         ]
+      },
+      {
+        "question": "விண்ணப்பதாரரின் வருமான நிலைத்தன்மை எப்படி உள்ளது?",
+        "options": [
+          {
+            "id": "stable",
+            "description": "நிலையானது"
+          },
+          {
+            "id": "moderate",
+            "description": "நடுத்தரமானது"
+          },
+          {
+            "id": "uncertain",
+            "description": "நிச்சயமற்றது"
+          }
+        ]
+      },
+      {
+        "question": "கடன்-வருமான விகிதம் ஏற்றுக்கொள்ளத்தக்கதா?",
+        "options": [
+          {
+            "id": "yes",
+            "description": "ஆம்"
+          },
+          {
+            "id": "no",
+            "description": "இல்லை"
+          }
+        ]
+      },
+      {
+        "question": "CIBIL மதிப்பெண் எந்தப் பிரிவில் வருகிறது?",
+        "options": [
+          {
+            "id": "excellent",
+            "description": "மிகச் சிறந்தது"
+          },
+          {
+            "id": "good",
+            "description": "நல்லது"
+          },
+          {
+            "id": "fair",
+            "description": "சராசரி"
+          },
+          {
+            "id": "poor",
+            "description": "மோசமானது"
+          }
+        ]
+      },
+      {
+        "question": "கூடுதல் ஆவணங்கள் கோர வேண்டுமா?",
+        "options": [
+          {
+            "id": "yes",
+            "description": "ஆம்"
+          },
+          {
+            "id": "no",
+            "description": "இல்லை"
+          }
+        ]
+      },
+      {
+        "question": "இந்தக் கூற்று ஆதாரத்தால் ஆதரிக்கப்படுகிறதா: விண்ணப்பதாரர் ஏற்கெனவே ஒரு கடனைச் செலுத்துகிறார்?",
+        "options": [
+          {
+            "id": "supported",
+            "description": "ஆதாரம் கூற்றை நிறுவுகிறது"
+          },
+          {
+            "id": "insufficient",
+            "description": "ஆதாரம் போதுமானதல்ல"
+          },
+          {
+            "id": "contradicted",
+            "description": "ஆதாரம் நேர்மாறானதை நிறுவுகிறது"
+          }
+        ]
+      },
+      {
+        "question": "பரிந்துரைக்கப்படும் வட்டி விகித அடுக்கு எது?",
+        "options": [
+          {
+            "id": "preferential",
+            "description": "சலுகை விகிதம்"
+          },
+          {
+            "id": "standard",
+            "description": "நிலையான விகிதம்"
+          },
+          {
+            "id": "high",
+            "description": "அதிக விகிதம்"
+          }
+        ]
       }
     ]
   },
   {
     "id": "grievance_bn",
-    "title": "Public grievance routing — Bengali",
+    "title": "Public grievance routing, 10 — Bengali",
     "language": "bn",
     "state": "অভিযোগ নম্বর: GRV-2291\nএলাকা: ওয়ার্ড ১৪, উত্তর অংশ\nঅভিযোগকারী: স্থানীয় বাসিন্দাদের পক্ষে একটি আবেদন, ৪১টি স্বাক্ষর\n\nবিবরণ: গত এগারো দিন ধরে আমাদের এলাকায় পানীয় জল সরবরাহ বন্ধ। পৌরসভার ট্যাঙ্কার মাত্র দুইবার এসেছে। রাস্তার ধারে একটি পাইপ ফেটে গেছে এবং সেই জল জমে মশার বংশবৃদ্ধি হচ্ছে। এলাকার দুটি শিশু ইতিমধ্যে জ্বরে আক্রান্ত হয়ে হাসপাতালে ভর্তি।\n\nপূর্ববর্তী অভিযোগ: GRV-2104 (একই বিষয়, ২৬ দিন আগে, 'সমাধান হয়েছে' হিসেবে বন্ধ করা হয়েছিল)",
     "criteria": [
@@ -573,12 +907,106 @@
             "description": "না, স্বাস্থ্য ঝুঁকি নেই"
           }
         ]
+      },
+      {
+        "question": "কতজন নাগরিক প্রভাবিত হয়েছেন?",
+        "options": [
+          {
+            "id": "single",
+            "description": "একটি পরিবার"
+          },
+          {
+            "id": "street",
+            "description": "একটি রাস্তা"
+          },
+          {
+            "id": "ward",
+            "description": "পুরো ওয়ার্ড"
+          },
+          {
+            "id": "multi",
+            "description": "একাধিক ওয়ার্ড"
+          }
+        ]
+      },
+      {
+        "question": "এই অভিযোগ কি পুনরাবৃত্ত?",
+        "options": [
+          {
+            "id": "yes",
+            "description": "হ্যাঁ"
+          },
+          {
+            "id": "no",
+            "description": "না"
+          }
+        ]
+      },
+      {
+        "question": "জরুরি ভিত্তিতে জলের ট্যাঙ্কার পাঠানো উচিত?",
+        "options": [
+          {
+            "id": "yes",
+            "description": "হ্যাঁ"
+          },
+          {
+            "id": "no",
+            "description": "না"
+          }
+        ]
+      },
+      {
+        "question": "এই দাবিটি কি প্রমাণ দ্বারা সমর্থিত: এলাকার শিশুরা অসুস্থ হয়েছে?",
+        "options": [
+          {
+            "id": "supported",
+            "description": "প্রমাণ দাবিটি প্রতিষ্ঠা করে"
+          },
+          {
+            "id": "insufficient",
+            "description": "প্রমাণ যথেষ্ট নয়"
+          },
+          {
+            "id": "contradicted",
+            "description": "প্রমাণ বিপরীত প্রতিষ্ঠা করে"
+          }
+        ]
+      },
+      {
+        "question": "কোন স্তরের কর্মকর্তাকে জানানো উচিত?",
+        "options": [
+          {
+            "id": "ward",
+            "description": "ওয়ার্ড কাউন্সিলর"
+          },
+          {
+            "id": "zonal",
+            "description": "জোনাল অফিসার"
+          },
+          {
+            "id": "commissioner",
+            "description": "পুর কমিশনার"
+          }
+        ]
+      },
+      {
+        "question": "মশাবাহিত রোগ ছড়ানোর ঝুঁকি রয়েছে কি?",
+        "options": [
+          {
+            "id": "yes",
+            "description": "হ্যাঁ"
+          },
+          {
+            "id": "no",
+            "description": "না"
+          }
+        ]
       }
     ]
   },
   {
     "id": "incident_en",
-    "title": "Production incident — English",
+    "title": "Production incident, 10 — English",
     "language": "en",
     "state": "SUPPORT TICKET #INC-44019\nFrom: Marcus Vance, CTO at Omnicorp Global (Tier 1 Strategic Enterprise)\nSubject: CRITICAL P0: Production US-East API 502 outage, checkout down\n\nOur primary checkout service has been failing completely for the last 48 minutes because your US-East API endpoint returns 502 Bad Gateway on every POST /v2/charges call. We are losing roughly $9,000 in transaction revenue every ten minutes.\n\nSeparately, our billing audit this morning found that your platform double-billed our corporate account for data overages ($3,800 improper charge on Invoice #INV-8812).\n\nIf the outage is not resolved within 30 minutes our legal counsel will issue notice of material breach of the 99.99% availability SLA.\n\nEnvironment: PRODUCTION\nAffected cluster: us-east-1b\nStatus page: not yet updated",
     "criteria": [
@@ -677,6 +1105,66 @@
           {
             "id": "no",
             "description": "No billing dispute is raised"
+          }
+        ]
+      },
+      {
+        "question": "What is the blast radius of this incident?",
+        "options": [
+          {
+            "id": "single",
+            "description": "One customer"
+          },
+          {
+            "id": "region",
+            "description": "One region"
+          },
+          {
+            "id": "all",
+            "description": "All customers"
+          }
+        ]
+      },
+      {
+        "question": "Should a public status page incident be opened?",
+        "options": [
+          {
+            "id": "yes",
+            "description": "Yes"
+          },
+          {
+            "id": "no",
+            "description": "No"
+          }
+        ]
+      },
+      {
+        "question": "Does this incident require a postmortem?",
+        "options": [
+          {
+            "id": "yes",
+            "description": "Yes"
+          },
+          {
+            "id": "no",
+            "description": "No"
+          }
+        ]
+      },
+      {
+        "question": "Assess the claim: the billing overcharge has already been acknowledged.",
+        "options": [
+          {
+            "id": "supported",
+            "description": "The evidence establishes the claim"
+          },
+          {
+            "id": "insufficient",
+            "description": "The evidence does not establish either"
+          },
+          {
+            "id": "contradicted",
+            "description": "The evidence establishes the opposite"
           }
         ]
       }

@@ -88,7 +88,8 @@ cd browser && python3 -m http.server 8090
 
 It is a sibling of the server demo, not a replacement — it scores criteria one at a
 time, because wllama exposes no batched branch evaluation, so its ratio is smaller than
-the numbers above. [`docs/BROWSER.md`](docs/BROWSER.md) records what differs and what
+the numbers above. More criteria do not make it faster in absolute terms; what falls is
+the cost per decision, which the page reports, because the state is prefilled once. [`docs/BROWSER.md`](docs/BROWSER.md) records what differs and what
 was verified before shipping it.
 
 ### Run the server demo

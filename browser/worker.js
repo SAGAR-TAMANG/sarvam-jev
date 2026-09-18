@@ -162,8 +162,15 @@ function renderGeneration(state, criteria) {
 }
 
 function generationPrompt(state, criteria) {
+  // The baseline always gets at least one demonstration, even when the readout runs
+  // with none. This is not symmetry for its own sake: the readout's output shape is
+  // structural -- the grammar and the answer slots enforce it -- while generation has
+  // no way to know the key convention it is being asked for unless it is shown one.
+  // With zero demonstrations a base model falls back to echoing the option ids as
+  // keys, which is a strawman, not a baseline.
   const parts = [GENERATION_INSTRUCTION, ""];
-  for (const example of GEN_FEWSHOT.slice(0, Math.min(shots, GEN_FEWSHOT.length))) {
+  const demos = Math.min(Math.max(shots, 1), GEN_FEWSHOT.length);
+  for (const example of GEN_FEWSHOT.slice(0, demos)) {
     const answer = Object.fromEntries(example.criteria.map((c) => [c.key, c.answer]));
     parts.push(`${renderGeneration(example.state, example.criteria)} ${JSON.stringify(answer)}\n`);
   }

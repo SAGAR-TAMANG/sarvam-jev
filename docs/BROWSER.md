@@ -48,6 +48,16 @@ Python engine sends no BOS. Measured on the fixture, that single token is worth 
 on a model this near-indifferent, so the page says so on load rather than implying
 parity.
 
+**The baseline always gets a demonstration, the readout may not.** The browser runs the
+readout with zero few-shot demonstrations, because on sarvam-1 the few-shot block was
+half the prompt and measured no better than none (0.490 against 0.516). The generation
+baseline is still shown at least one worked example. That asymmetry is deliberate and
+runs against our own interest: the readout's output shape is enforced by the grammar
+and the answer slots, while generation cannot know the requested key convention unless
+it is shown one. With none, a base model echoes the option ids back as keys -- eleven
+hallucinated keys on a four-criterion Tamil ticket -- which inflates the ratio by
+comparing against a baseline that was never given a chance.
+
 **Weights are quantized.** Every accuracy figure in `README.md` is for native BF16.
 
 ## What was verified before shipping
@@ -126,6 +136,13 @@ cd browser && python3 -m http.server 8090
 - No quality measurement has been made on any quantized build. Treat every published
   accuracy figure as applying to BF16, three demonstrations and no BOS — none of which
   the browser matches.
-- Speed is the visitor's, not the model's: about six seconds for a five-criterion ticket
-  on a desktop GPU, about fifty on a phone, measured on sarvam-1 Q4_K_M and Qwen3-0.6B
-  respectively.
+- Speed is the visitor's, not the model's: roughly a second per decision on a desktop
+  GPU and about ten times that on a phone, measured on sarvam-1 Q4_K_M and Qwen3-0.6B.
+- Every example ships with at least ten criteria. On a narrow viewport, or a device
+  reporting four cores or fewer, a preset loads its first four rows and offers a single
+  click to restore the rest — ten rows is a good demonstration on a desktop and a
+  two-minute wait on a phone. Rows are editable either way, so this is a default rather
+  than a restriction.
+- More criteria do not make the browser faster in absolute terms — each is a separate
+  call. What falls is the cost per decision, because the state is prefilled once. The
+  batched server path is the one where total time is flat in the number of criteria.

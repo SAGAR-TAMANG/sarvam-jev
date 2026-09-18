@@ -4,6 +4,11 @@ const $ = (id) => document.getElementById(id);
 const LETTERS = "ABCDEFGHIJKLMNOP";
 const criteriaBox = $("criteria");
 
+// Rows kept by default on a device that will take about ten seconds per decision.
+// Every example ships with at least ten criteria, which is a good demonstration on a
+// desktop and a two-minute wait on a phone. They can all be restored in one click.
+const SMALL_DEVICE_ROWS = 4;
+
 let presets = [];
 let manifest = null;
 let worker = null;
@@ -11,6 +16,7 @@ let modelReady = false;
 let readoutSeconds = 0;
 let criterionStarted = 0;
 let criterionTimes = [];
+let decisionCount = 0;
 let chosenModel = null;
 
 const pct = (value) => `${(value * 100).toFixed(1)}%`;
@@ -157,7 +163,8 @@ function resetLanes() {
     node.className = "output empty";
     node.textContent = "waiting for a run";
   }
-  ["readout-total", "readout-passes", "gen-ttft", "gen-total", "gen-passes", "gen-tokens"]
+  ["readout-total", "readout-passes", "readout-split", "readout-each",
+   "gen-ttft", "gen-total", "gen-passes", "gen-each", "gen-tokens"]
     .forEach((id) => { $(id).textContent = "—"; });
   $("readout-tokens").textContent = "0 tokens";
   $("gen-verdict").innerHTML = "";
@@ -273,6 +280,7 @@ function handle(message) {
 
     case "readout-done":
       readoutSeconds = message.seconds;
+      decisionCount = message.decisions.length;
       readoutClock.stop(message.seconds, `${message.decisions.length} decisions`);
       $("readout-total").textContent = secs(message.seconds);
       $("readout-passes").textContent = message.readouts;
@@ -284,6 +292,7 @@ function handle(message) {
         $("readout-split").textContent = `${first.toFixed(1)}s / ${mean.toFixed(1)}s`;
       }
       $("readout-tokens").textContent = "0 tokens";
+      $("readout-each").textContent = `${(message.seconds / message.readouts).toFixed(2)}s`;
       $("gen-output").className = "output";
       $("gen-output").innerHTML = '<span class="caret"></span>';
       genClock.start("decoding");
@@ -305,6 +314,7 @@ function handle(message) {
       $("gen-total").textContent = secs(result.seconds);
       $("gen-passes").textContent = result.forwardPasses;
       $("gen-tokens").textContent = `${result.generatedTokens} tokens`;
+      $("gen-each").textContent = `${(result.seconds / Math.max(decisionCount, 1)).toFixed(2)}s`;
       if (result.firstTokenSeconds) $("gen-ttft").textContent = secs(result.firstTokenSeconds);
       renderVerdict(result);
       const ratio = result.seconds / Math.max(readoutSeconds, 1e-9);
@@ -376,12 +386,40 @@ function run() {
   worker.postMessage({ type: "run", state, criteria });
 }
 
+function isSmallDevice() {
+  return matchMedia("(max-width: 820px)").matches || (navigator.hardwareConcurrency || 8) <= 4;
+}
+
+function showCriteria(list) {
+  criteriaBox.innerHTML = "";
+  list.forEach(addCriterion);
+}
+
 function loadPreset(id) {
   const preset = presets.find((item) => item.id === id);
   if (!preset) return;
   $("state").value = preset.state;
-  criteriaBox.innerHTML = "";
-  preset.criteria.forEach(addCriterion);
+
+  const total = preset.criteria.length;
+  const limit = isSmallDevice() ? Math.min(SMALL_DEVICE_ROWS, total) : total;
+  showCriteria(preset.criteria.slice(0, limit));
+
+  const note = $("criteria-note");
+  if (limit < total) {
+    note.innerHTML =
+      `<span>Showing ${limit} of ${total} rows — this device looks slow, and every row is a `
+      + `separate readout here.</span>`
+      + `<button class="chip small" type="button" id="show-all-rows">Load all ${total}</button>`;
+    note.hidden = false;
+    $("show-all-rows").onclick = () => {
+      showCriteria(preset.criteria);
+      note.hidden = true;
+    };
+  } else {
+    note.hidden = true;
+    note.innerHTML = "";
+  }
+
   updateChars();
   resetLanes();
   [...$("preset-buttons").children].forEach((button) => {

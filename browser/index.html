@@ -36,11 +36,11 @@
       <p><strong>Nothing to install and nothing to sign up for.</strong> Your ticket never
         leaves this page — there is no server to send it to. ↓</p>
     </div>
-    <p class="device-note" id="device-note">sarvam-1 Q4_K_M is selected by default and reads a
-      five-criterion ticket in about six seconds on a desktop GPU. A phone is roughly ten times
-      slower — measured at about fifty seconds for the same ticket — so on mobile pick Qwen3&nbsp;0.6B
-      below, keep the number of criteria small, and expect to wait. The lane reports which
-      criterion it is on and how long is left.</p>
+    <p class="device-note" id="device-note">sarvam-1 Q4_K_M is selected by default and
+      reads roughly a second per decision on a desktop GPU. A phone is about ten times slower, so
+      on mobile pick Qwen3&nbsp;0.6B below, delete rows you do not need, and expect to wait — the
+      thirty-criterion example takes minutes there. The lane reports which criterion it is on and
+      how long is left.</p>
   </section>
 
   <section class="slab" aria-labelledby="setup-title">
@@ -103,6 +103,7 @@
           <button class="chip" id="add-criterion">+ ADD ROW</button>
         </div>
         <div id="criteria" class="criteria-scroll"></div>
+        <p class="criteria-note" id="criteria-note" hidden></p>
       </div>
     </div>
   </section>
@@ -115,13 +116,15 @@
       </div>
       <p class="explain">Each criterion is one constrained readout: a softmax over the logits of
         its own answer letters. Nothing is sampled, so no answer can be malformed or borrow
-        another criterion's options.</p>
+        another criterion's options. Add rows and watch the cost per decision fall — the state is
+        paid for once, however many questions you ask of it.</p>
       <div class="clock"><span class="time" id="readout-clock">0.00s</span><span class="sub" id="readout-sub">idle</span></div>
       <div id="readout-output" class="output empty">waiting for a run</div>
       <dl class="metrics">
         <div><dt>total</dt><dd id="readout-total">—</dd></div>
         <div><dt>readouts</dt><dd id="readout-passes">—</dd></div>
         <div><dt>first / rest</dt><dd id="readout-split">—</dd></div>
+        <div><dt>per decision</dt><dd id="readout-each">—</dd></div>
         <div><dt>output</dt><dd id="readout-tokens">0 tokens</dd></div>
       </dl>
     </article>
@@ -132,13 +135,16 @@
         <span class="badge pink">TOKEN BY TOKEN</span>
       </div>
       <p class="explain">The same decisions asked for as a JSON object, decoded greedily. Every
-        token is one forward pass, and the object is only usable once the last brace lands.</p>
+        token is one forward pass, and the object is only usable once the last brace lands. This
+        path is always shown a worked example of the format, even when the readout is given none —
+        a baseline that cannot know the output shape is not a baseline.</p>
       <div class="clock"><span class="time" id="gen-clock">0.00s</span><span class="sub" id="gen-sub">idle</span></div>
       <pre id="gen-output" class="output empty">waiting for a run</pre>
       <dl class="metrics">
         <div><dt>first token</dt><dd id="gen-ttft">—</dd></div>
         <div><dt>total</dt><dd id="gen-total">—</dd></div>
         <div><dt>passes</dt><dd id="gen-passes">—</dd></div>
+        <div><dt>per decision</dt><dd id="gen-each">—</dd></div>
         <div><dt>output</dt><dd id="gen-tokens">—</dd></div>
       </dl>
       <div id="gen-verdict" class="verdict-line"></div>

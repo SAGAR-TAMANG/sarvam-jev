@@ -392,3 +392,13 @@ pre.output.empty { white-space: normal; }
 @media (max-width: 700px) {
   .phase + .phase { border-left: none; border-top: 1px solid var(--hair); }
 }
+
+/* ---------- trimmed-preset notice ---------- */
+
+.criteria-note {
+  margin: 8px 0 0; padding: 9px 11px;
+  border: 1px solid var(--line); background: var(--lime);
+  font-family: var(--mono); font-size: 11px; line-height: 1.5;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.criteria-note button { flex: none; background: #fff; }
