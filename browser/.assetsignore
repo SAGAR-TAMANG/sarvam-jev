@@ -1,0 +1,4 @@
+# Config and housekeeping files that live here but must not be served.
+wrangler.jsonc
+.assetsignore
+.nojekyll
