@@ -1,0 +1,50 @@
+name: tests
+
+# GitHub's hosted runners have no GPU, so this workflow deliberately covers only the
+# parts that do not need one: the tokenizer-level invariants and a front-end syntax
+# check. Anything in bench/ needs a CUDA device and must be run locally.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cache the Sarvam tokenizer
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-sarvam-1-tokenizer-v1
+
+      # Deliberately not `pip install -e .`: that pins torch, which is an ~800 MB
+      # download these tests never import. Only the tokenizer stack is needed.
+      - name: Install test dependencies
+        run: pip install "transformers==5.17.0" sentencepiece protobuf pytest
+
+      - name: Run tokenizer-level tests
+        env:
+          # Optional. Raises the anonymous Hugging Face rate limit if the secret exists;
+          # the tokenizer is a public download, so the run still works without it.
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -m pytest tests/ -q
+
+      - name: Check front-end syntax
+        run: node --check web/app.js
+
+  published-numbers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify committed results match their checksums
+        run: cd results/raw && sha256sum -c SHA256SUMS

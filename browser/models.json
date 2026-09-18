@@ -1,0 +1,54 @@
+{
+  "schema": "sarvam-jev-browser-models-v2",
+  "note": "Answer-slot ids are per-model and are NOT contiguous in either vocabulary, so the usual labelBase+index shortcut is wrong for both. They were derived by probing each tokenizer with the real prompt and checking that appending the letter adds exactly one token without disturbing the prompt's own tokenization. Quality figures in README.md are for sarvam-1 in native BF16 with three demonstrations and no BOS; these builds are quantized, run with fewer demonstrations, and llama.cpp prepends a BOS, so they are a different configuration and have not been separately measured.",
+  "defaultShots": 0,
+  "models": [
+    {
+      "id": "qwen3-0.6b",
+      "name": "Qwen3 0.6B",
+      "tier": "smallest download, for phones and weak devices",
+      "repo": "Qwen/Qwen3-0.6B-GGUF",
+      "revision": "23749fefcc72300e3a2ad315e1317431b06b590a",
+      "file": "Qwen3-0.6B-Q8_0.gguf",
+      "bytes": 639446688,
+      "label": "639 MB",
+      "indic": false,
+      "note": "Not an Indic model. Included as a fast control: watch how many more tokens it needs for the same Devanagari ticket.",
+      "answerSlots": {
+        "separator": " ",
+        "ids": [362, 425, 356, 422, 468, 434, 479, 472, 358, 619, 730, 444, 386, 451, 506, 393]
+      }
+    },
+    {
+      "id": "sarvam-q4km",
+      "name": "sarvam-1 Q4_K_M",
+      "tier": "recommended on desktop",
+      "repo": "bartowski/sarvam-1-GGUF",
+      "revision": "3bcf10bf1d019a55a8824cb648eb1b990a05ed41",
+      "file": "sarvam-1-Q4_K_M.gguf",
+      "bytes": 1547736928,
+      "label": "1.55 GB",
+      "indic": true,
+      "default": true,
+      "answerSlots": {
+        "separator": " ",
+        "ids": [4585, 4799, 4637, 4884, 4918, 4898, 4985, 4858, 4615, 5364, 5728, 5002, 4741, 4916, 5104, 4747]
+      }
+    },
+    {
+      "id": "sarvam-q8",
+      "name": "sarvam-1 Q8_0",
+      "tier": "closest to the measured BF16 weights",
+      "repo": "bartowski/sarvam-1-GGUF",
+      "revision": "3bcf10bf1d019a55a8824cb648eb1b990a05ed41",
+      "file": "sarvam-1-Q8_0.gguf",
+      "bytes": 2685327200,
+      "label": "2.69 GB",
+      "indic": true,
+      "answerSlots": {
+        "separator": " ",
+        "ids": [4585, 4799, 4637, 4884, 4918, 4898, 4985, 4858, 4615, 5364, 5728, 5002, 4741, 4916, 5104, 4747]
+      }
+    }
+  ]
+}

@@ -75,7 +75,23 @@ Score a labelled fixture and print the headline metric:
   --output results/local/phase0-sarvam1.json
 ```
 
-Run the demo UI:
+### Try it with no install
+
+`browser/` is a static page that runs sarvam-1 in your own tab through wllama
+(llama.cpp compiled to WebAssembly, with a WebGPU backend). No backend, nothing to
+install, and your ticket never leaves the page because there is nowhere to send it.
+`.github/workflows/pages.yml` publishes it to GitHub Pages; any static host works.
+
+```bash
+cd browser && python3 -m http.server 8090
+```
+
+It is a sibling of the server demo, not a replacement — it scores criteria one at a
+time, because wllama exposes no batched branch evaluation, so its ratio is smaller than
+the numbers above. [`docs/BROWSER.md`](docs/BROWSER.md) records what differs and what
+was verified before shipping it.
+
+### Run the server demo
 
 ```bash
 .venv/bin/python -m uvicorn server.app:app --host 127.0.0.1 --port 8000

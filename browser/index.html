@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="description" content="Read typed decision probabilities out of an Indic model's logits, entirely in your browser.">
+<title>sarvam-jev in your browser</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+Devanagari:wght@400;500;700&family=Noto+Sans+Tamil:wght@400;500;700&family=Noto+Sans+Bengali:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="coi-serviceworker.js"></script>
+</head>
+<body>
+<div class="page">
+
+  <header class="mast">
+    <a class="brand" href="./">SARVAM-JEV</a>
+    <div class="mast-right">
+      <span class="tagline">Indic decisions, read not written</span>
+      <a class="repo-link" href="https://github.com/SAGAR-TAMANG/sarvam-jev">GITHUB REPO ↗</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <p class="eyebrow">A live, local experiment</p>
+    <h1>Indic decisions<br><mark>in your browser.</mark></h1>
+    <p class="lede">sarvam-1 runs on your own machine, in this tab. It can either read
+      probabilities for the options you allow, or write the same answers token by token as
+      JSON. Load it once, run both, and measure the difference yourself.</p>
+    <div class="truth-strip">
+      <span>browser only</span><span>no backend</span><span>your timings</span><span id="size-chip">1.55 GB model</span>
+    </div>
+    <div class="callout">
+      <p><strong>Nothing to install and nothing to sign up for.</strong> Your ticket never
+        leaves this page — there is no server to send it to. ↓</p>
+    </div>
+    <p class="device-note" id="device-note">sarvam-1 Q4_K_M is selected by default and reads a
+      five-criterion ticket in about six seconds on a desktop GPU. A phone is roughly ten times
+      slower — measured at about fifty seconds for the same ticket — so on mobile pick Qwen3&nbsp;0.6B
+      below, keep the number of criteria small, and expect to wait. The lane reports which
+      criterion it is on and how long is left.</p>
+  </section>
+
+  <section class="slab" aria-labelledby="setup-title">
+    <div class="section-head">
+      <div><p class="eyebrow">00 / setup</p><h2 id="setup-title">Load the model once</h2></div>
+      <div class="setup-actions">
+        <label class="field-inline">
+          <span class="micro">Model</span>
+          <select id="model-select"></select>
+        </label>
+        <button class="cta" id="load">↓ LOAD MODEL</button>
+      </div>
+    </div>
+
+    <p class="support" id="support" role="status">Checking what this browser supports…</p>
+
+    <div class="phases">
+      <div class="phase">
+        <small>download / cache</small><strong id="download-value">—</strong>
+        <div class="meter"><i id="download-meter"></i></div>
+        <span id="download-detail">nothing downloads until you press load</span>
+      </div>
+      <div class="phase">
+        <small>model load</small><strong id="load-value">—</strong>
+        <span>fetch, decompress and prepare</span>
+      </div>
+      <div class="phase">
+        <small>warmup</small><strong id="warmup-value">—</strong>
+        <span id="warmup-detail">compile a real pass</span>
+      </div>
+    </div>
+
+    <p class="fine">Weights come from Hugging Face and stay in your browser cache, so a second
+      visit is instant. First load can take several minutes depending on your network. The
+      quality figures in the repository are for native BF16 weights; these builds are
+      quantized and have not been separately measured.</p>
+  </section>
+
+  <section class="slab" aria-labelledby="decision-title">
+    <div class="section-head">
+      <div><p class="eyebrow">01 / decision</p><h2 id="decision-title">Give it a real ticket</h2></div>
+      <button class="cta" id="run" disabled>▶ RUN BOTH METHODS</button>
+    </div>
+
+    <div class="presets">
+      <span class="micro">Try an example</span>
+      <div class="preset-buttons" id="preset-buttons"></div>
+    </div>
+
+    <div class="decision-grid">
+      <div class="col">
+        <p class="micro">State <em id="state-chars">0 characters</em></p>
+        <textarea id="state" spellcheck="false"
+          placeholder="Paste the ticket, document or record that every criterion is answered against."></textarea>
+        <p class="fine">Prefilled once. Every criterion below reuses it.</p>
+      </div>
+      <div class="col">
+        <div class="col-head">
+          <p class="micro">Criteria <em id="criteria-count">0 rows</em></p>
+          <button class="chip" id="add-criterion">+ ADD ROW</button>
+        </div>
+        <div id="criteria" class="criteria-scroll"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="race">
+    <article class="lane readout">
+      <div class="lane-head">
+        <div><p class="eyebrow">02A / direct readout</p><h2>Choice probabilities</h2></div>
+        <span class="badge lime">NO DECODING</span>
+      </div>
+      <p class="explain">Each criterion is one constrained readout: a softmax over the logits of
+        its own answer letters. Nothing is sampled, so no answer can be malformed or borrow
+        another criterion's options.</p>
+      <div class="clock"><span class="time" id="readout-clock">0.00s</span><span class="sub" id="readout-sub">idle</span></div>
+      <div id="readout-output" class="output empty">waiting for a run</div>
+      <dl class="metrics">
+        <div><dt>total</dt><dd id="readout-total">—</dd></div>
+        <div><dt>readouts</dt><dd id="readout-passes">—</dd></div>
+        <div><dt>first / rest</dt><dd id="readout-split">—</dd></div>
+        <div><dt>output</dt><dd id="readout-tokens">0 tokens</dd></div>
+      </dl>
+    </article>
+
+    <article class="lane generated">
+      <div class="lane-head">
+        <div><p class="eyebrow">02B / generation</p><h2>JSON answers</h2></div>
+        <span class="badge pink">TOKEN BY TOKEN</span>
+      </div>
+      <p class="explain">The same decisions asked for as a JSON object, decoded greedily. Every
+        token is one forward pass, and the object is only usable once the last brace lands.</p>
+      <div class="clock"><span class="time" id="gen-clock">0.00s</span><span class="sub" id="gen-sub">idle</span></div>
+      <pre id="gen-output" class="output empty">waiting for a run</pre>
+      <dl class="metrics">
+        <div><dt>first token</dt><dd id="gen-ttft">—</dd></div>
+        <div><dt>total</dt><dd id="gen-total">—</dd></div>
+        <div><dt>passes</dt><dd id="gen-passes">—</dd></div>
+        <div><dt>output</dt><dd id="gen-tokens">—</dd></div>
+      </dl>
+      <div id="gen-verdict" class="verdict-line"></div>
+    </article>
+  </section>
+
+  <section class="scoreline">
+    <div class="score-left">
+      <p class="micro invert">Measured wall-time ratio</p>
+      <p id="scorenote">Load a model, then run both methods. They run one after the other on the
+        same loaded weights so they never contend for your GPU.</p>
+    </div>
+    <strong id="ratio">run it on your machine</strong>
+  </section>
+
+  <section class="slab explainer">
+    <div class="section-head">
+      <div><p class="eyebrow">02 / how it works</p><h2>Read the answer, do not write it</h2></div>
+    </div>
+    <div class="method-map" aria-label="The two decision paths">
+      <div class="map-box"><small>your decision</small><strong>state + criteria + options</strong></div>
+      <div class="map-arrow" aria-hidden="true">→</div>
+      <div class="map-box model"><small>in this tab</small><strong id="map-model">sarvam-1 · 2B</strong></div>
+      <div class="map-fork" aria-hidden="true">↗<br>↘</div>
+      <div class="map-outputs">
+        <div class="map-box lime"><small>read logits</small><strong id="map-slots">A…P probabilities</strong></div>
+        <div class="map-box pink"><small>write tokens</small><strong>{"q1": "…", "q2": "…"}</strong></div>
+      </div>
+    </div>
+    <p class="fine">The answer-letter ids are listed in <code>models.json</code>, not discovered
+      here: this build of wllama exposes no tokenizer to probe with. They were derived beforehand
+      by probing both Hugging Face's tokenizer and llama.cpp's and checking they agree, and they
+      are not contiguous in either vocabulary, so the usual shortcut of assuming consecutive ids
+      would be wrong. The check that survives in the page is downstream — a readout that comes
+      back without a score for every declared option is refused rather than shown.</p>
+  </section>
+
+  <details class="notes">
+    <summary>What this demo does — and does not — show</summary>
+    <div class="notes-grid">
+      <p><b>Not the server's parallel path.</b> The Python engine prefills the state once and
+        evaluates every criterion in a single batched pass, which is where its 8.8× at twenty
+        criteria comes from. wllama exposes no batched branch evaluation, so criteria here are
+        scored one at a time with the shared prefix cached between them. Expect a smaller ratio
+        than the repository reports.</p>
+      <p><b>Quantized weights.</b> Every published accuracy figure is for native BF16. These are
+        3-, 4- and 8-bit builds; quantization can move both quality and speed, and no separate
+        measurement has been made.</p>
+      <p><b>Conditional probabilities.</b> The readout is a softmax over only the option letters
+        you supplied. It is not calibrated confidence, and a high number does not establish that
+        the decision is correct.</p>
+      <p><b>A 2B base model.</b> sarvam-1 was never instruction-tuned. On openjev's authored
+        fixture it scores 0.516 mean family balanced accuracy against a 0.333 chance floor — well
+        above chance, well below instruction-tuned models of the same size. Expect visible
+        mistakes.</p>
+    </div>
+  </details>
+
+  <footer class="foot">
+    <span class="byline">Built by <a href="https://sagartamang.com/">Sagar</a>
+      at <a href="https://twospoon.ai/">twospoon</a></span>
+    <span class="credit">runs on <a href="https://github.com/ngxson/wllama">wllama</a> ·
+      pattern after <a href="https://github.com/TheoLeeCJ/openjev">openjev</a> (MIT)</span>
+    <span id="disclaimer">conditional option score; uncalibrated as decision confidence</span>
+  </footer>
+
+</div>
+
+<template id="criterion-template">
+  <div class="criterion">
+    <div class="criterion-head">
+      <span class="row-num"></span>
+      <input class="question" placeholder="Question to ask about the state">
+      <button class="x remove" title="Remove row">×</button>
+    </div>
+    <div class="options"></div>
+    <div class="criterion-foot">
+      <button class="chip small remove-option">− REMOVE</button>
+      <span class="count"></span>
+      <button class="chip small add-option">+ ADD</button>
+    </div>
+  </div>
+</template>
+
+<template id="option-template">
+  <label class="option-row">
+    <b class="letter"></b>
+    <input class="opt-id" placeholder="id">
+    <input class="opt-desc" placeholder="Description the model reads">
+  </label>
+</template>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

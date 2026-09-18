@@ -1,0 +1,64 @@
+name: pages
+
+# Publishes browser/ to GitHub Pages. The demo is fully static: model weights are
+# fetched from Hugging Face into the visitor's browser cache and inference runs in
+# their tab, so there is nothing to build and no server to host.
+#
+# GitHub Pages cannot set response headers, so the page cannot be served
+# cross-origin isolated and wllama falls back to single-threaded WebAssembly.
+# browser/coi-serviceworker.js re-serves responses with COOP/COEP attached to win
+# isolation back. A host that honours browser/_headers (Cloudflare Pages, Netlify)
+# gets it without the shim.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "browser/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Keep the demo and the presets in step
+        # presets.json is copied rather than symlinked so the directory stays
+        # self-contained for any static host. Copying here means a change to the
+        # fixtures cannot silently leave the published demo behind.
+        run: |
+          cp fixtures/presets.json browser/presets.json
+          test -f browser/vendor/wllama/wasm/wllama.wasm
+          test -f browser/vendor/wllama/LICENCE
+
+      - name: Check the page scripts parse
+        run: |
+          node --check browser/app.js
+          node --check browser/worker.js
+          node --check browser/coi-serviceworker.js
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: browser
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
