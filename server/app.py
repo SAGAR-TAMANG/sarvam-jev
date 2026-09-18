@@ -17,6 +17,8 @@ import time
 from pathlib import Path
 from typing import Any
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
@@ -34,8 +36,25 @@ MODEL_ID = os.environ.get("SARVAM_JEV_MODEL", "sarvamai/sarvam-1")
 PROMPT_STYLE = os.environ.get("SARVAM_JEV_STYLE", "completion")
 SHOTS = int(os.environ.get("SARVAM_JEV_SHOTS", "3"))
 
-app = FastAPI(title="sarvam-jev")
 _engine: dict[str, Any] = {}
+
+# Guards construction of the engine. FastAPI runs sync endpoints in a threadpool, so
+# a bare `if not _engine` lets every concurrent request start its own load: one page
+# load plus a couple of refreshes was enough to pull several 4 GB copies of the model
+# at once and drive the machine into swap.
+_engine_lock = threading.Lock()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Load once, before the first request, rather than racing on the first one.
+    print(f"Loading {MODEL_ID} ...", flush=True)
+    engine()
+    yield
+    _engine.clear()
+
+
+app = FastAPI(title="sarvam-jev", lifespan=lifespan)
 
 # One GPU: serialise runs so the two paths never contend and their timings stay
 # comparable. openjev does the same for the same reason.
@@ -44,9 +63,13 @@ _gpu = threading.Lock()
 
 def engine():
     if not _engine:
-        model, tokenizer, metadata = load_causal_model(MODEL_ID)
-        _engine.update(model=model, tokenizer=tokenizer, metadata=metadata)
-        _warm(model, tokenizer, metadata)
+        with _engine_lock:
+            # Re-check inside the lock: whoever was ahead of us has finished by now.
+            if not _engine:
+                model, tokenizer, metadata = load_causal_model(MODEL_ID)
+                _warm(model, tokenizer, metadata)
+                # Published last, so no other thread sees a half-built engine.
+                _engine.update(model=model, tokenizer=tokenizer, metadata=metadata)
     return _engine["model"], _engine["tokenizer"], _engine["metadata"]
 
 
@@ -135,6 +158,8 @@ def presets():
 
 @app.get("/api/model")
 def model_info():
+    # The model is loaded during startup, so by the time this can be reached it is
+    # either ready or genuinely broken.
     try:
         _, _, metadata = engine()
     except Exception as error:  # noqa: BLE001
