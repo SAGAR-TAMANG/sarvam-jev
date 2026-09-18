@@ -1,0 +1,32 @@
+# Local reference clones (not ours, not pushed)
+reference/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Environments
+.venv/
+venv/
+
+# Model weights & caches
+models/
+*.safetensors
+*.gguf
+
+# Local run artifacts
+results/local/
+!results/raw/
+!results/*.json
+*.log
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+
+# Screenshots and scratch dropped in by hand
+temp/

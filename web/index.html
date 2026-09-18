@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sarvam-jev</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+Devanagari:wght@400;500;700&family=Noto+Sans+Tamil:wght@400;500;700&family=Noto+Sans+Bengali:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="mast">
+    <a class="brand" href="./">SARVAM-JEV</a>
+    <div class="mast-right">
+      <span class="tagline">Can a 2B Indic model decide without writing?</span>
+      <a class="repo-link" href="https://github.com/SAGAR-TAMANG/sarvam-jev">GITHUB REPO ↗</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <p class="eyebrow">A live, local experiment</p>
+    <h1>Typed decisions<br><mark>in Indic languages.</mark></h1>
+    <p class="lede">A local model can either read probabilities for the options you allow, or
+      write the same answers token by token as JSON. Same model, same ticket, same questions.
+      Run both on your own GPU and measure the difference.</p>
+    <div class="truth-strip">
+      <span>your GPU</span><span>no generation</span><span>your timings</span><span id="model-chip">connecting…</span>
+    </div>
+  </section>
+
+  <section class="slab" aria-labelledby="decision-title">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">01 / decision</p>
+        <h2 id="decision-title">Give it a real ticket</h2>
+      </div>
+      <button class="cta" id="run">▶ RUN BOTH METHODS</button>
+    </div>
+
+    <div class="presets">
+      <span class="micro">Try an example</span>
+      <div class="preset-buttons" id="preset-buttons"></div>
+    </div>
+
+    <div class="decision-grid">
+      <div class="col">
+        <p class="micro">State <em id="state-chars">0 characters</em></p>
+        <textarea id="state" spellcheck="false"
+          placeholder="Paste the ticket, document or record that every criterion is answered against."></textarea>
+        <p class="fine">Prefilled once. Every criterion below reuses it, which is the whole point.</p>
+      </div>
+
+      <div class="col">
+        <div class="col-head">
+          <p class="micro">Criteria <em id="criteria-count">0 rows</em></p>
+          <button class="chip" id="add-criterion">+ ADD ROW</button>
+        </div>
+        <div id="criteria" class="criteria-scroll"></div>
+      </div>
+    </div>
+
+    <p class="fine rule-top">Both paths receive the same state, questions and option
+      descriptions. One reads option probabilities out of the logits; the other writes the
+      same answers as JSON text.</p>
+  </section>
+
+
+  <section class="race">
+
+    <article class="lane readout">
+      <div class="lane-head">
+        <div><p class="eyebrow">02A / direct readout</p><h2>Choice probabilities</h2></div>
+        <span class="badge lime">NO DECODING</span>
+      </div>
+      <p class="explain">One state prefill, then every criterion evaluated together. The answer is
+        a softmax over the option letters' logits, so it arrives complete or not at all.</p>
+      <div class="clock"><span class="time" id="readout-clock">0.00s</span><span class="sub" id="readout-sub">idle</span></div>
+      <div id="readout-output" class="output empty">waiting for a run</div>
+      <dl class="metrics">
+        <div><dt>total</dt><dd id="readout-total">—</dd></div>
+        <div><dt>passes</dt><dd id="readout-passes">—</dd></div>
+        <div><dt>output</dt><dd id="readout-tokens">0 tokens</dd></div>
+      </dl>
+    </article>
+
+    <article class="lane generated">
+      <div class="lane-head">
+        <div><p class="eyebrow">02B / generation</p><h2>JSON answers</h2></div>
+        <span class="badge pink">TOKEN BY TOKEN</span>
+      </div>
+      <p class="explain">The same decisions asked for as a JSON object, decoded greedily. Every
+        token is one forward pass, and the object is only usable once the last brace lands.</p>
+      <div class="clock"><span class="time" id="gen-clock">0.00s</span><span class="sub" id="gen-sub">idle</span></div>
+      <pre id="gen-output" class="output empty">waiting for a run</pre>
+      <dl class="metrics">
+        <div><dt>first token</dt><dd id="gen-ttft">—</dd></div>
+        <div><dt>total</dt><dd id="gen-total">—</dd></div>
+        <div><dt>passes</dt><dd id="gen-passes">—</dd></div>
+        <div><dt>output</dt><dd id="gen-tokens">—</dd></div>
+      </dl>
+      <div id="gen-verdict" class="verdict-line"></div>
+    </article>
+
+  </section>
+
+  <section class="scoreline">
+    <div class="score-left">
+      <p class="micro invert">Measured wall-time ratio</p>
+      <p id="scorenote">The methods run sequentially on the same loaded model so they do not
+        contend for one GPU. The readout runs first, then generation.</p>
+    </div>
+    <strong id="ratio">run it on your GPU</strong>
+  </section>
+
+  <section class="slab explainer">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">03 / how it works</p>
+        <h2>One prefill, many branches</h2>
+      </div>
+    </div>
+    <div class="method-map" aria-label="The two decision paths">
+      <div class="map-box"><small>your decision</small><strong>state + criteria + options</strong></div>
+      <div class="map-arrow" aria-hidden="true">→</div>
+      <div class="map-box model"><small>same local model</small><strong id="map-model">sarvam-1 · 2B</strong></div>
+      <div class="map-fork" aria-hidden="true">↗<br>↘</div>
+      <div class="map-outputs">
+      <div class="map-box lime"><small>read logits</small><strong>A…P probabilities</strong></div>
+      <div class="map-box pink"><small>write tokens</small><strong>{"q1": "…", "q2": "…"}</strong></div>
+    </div>
+    </div>
+    <p class="fine">The state is prefilled into a KV cache exactly once. Each criterion then
+      branches off that cache carrying only its own question and options, so no criterion can
+      see another's text. Two forward passes in total, however many criteria you ask.</p>
+  </section>
+
+  <details class="notes">
+    <summary>What these numbers do — and do not — mean</summary>
+    <div class="notes-grid">
+      <p><b>Conditional probabilities.</b> The readout is a softmax over only the option letters
+        you supplied. It is not calibrated confidence, and a high value does not establish that
+        the decision is right.</p>
+      <p><b>A 2B base model.</b> sarvam-1 was never instruction-tuned. It scores 0.516 mean family
+        balanced accuracy on openjev's authored fixture against a 0.333 chance floor — well above
+        chance, well below instruction-tuned models of the same size.</p>
+      <p><b>Real local timing.</b> Prompt construction, tokenization, prefill, branch evaluation
+        and decode are all inside the timed region. Model load and warmup are not.</p>
+      <p><b>Watch the verdict line.</b> Generation usually emits valid JSON with every key present,
+        then fills a criterion with an option id belonging to a different criterion. A schema
+        validator accepts that. The typed readout cannot express it.</p>
+    </div>
+  </details>
+
+  <footer class="foot">
+    <span class="byline">Built by <a href="https://sagartamang.com/">Sagar</a>
+      at <a href="https://twospoon.ai/">twospoon</a></span>
+    <span class="credit">engine and metric after
+      <a href="https://github.com/TheoLeeCJ/openjev">openjev</a> (MIT)</span>
+    <span id="disclaimer"></span>
+  </footer>
+
+</div>
+
+<template id="criterion-template">
+  <div class="criterion">
+    <div class="criterion-head">
+      <span class="row-num"></span>
+      <input class="question" placeholder="Question to ask about the state">
+      <button class="x remove" title="Remove row">×</button>
+    </div>
+    <div class="options"></div>
+    <div class="criterion-foot">
+      <button class="chip small remove-option">− REMOVE</button>
+      <span class="count"></span>
+      <button class="chip small add-option">+ ADD</button>
+    </div>
+  </div>
+</template>
+
+<template id="option-template">
+  <label class="option-row">
+    <b class="letter"></b>
+    <input class="opt-id" placeholder="id">
+    <input class="opt-desc" placeholder="Description the model reads">
+  </label>
+</template>
+
+<script src="app.js"></script>
+</body>
+</html>

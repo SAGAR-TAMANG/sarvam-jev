@@ -1,0 +1,40 @@
+{
+  "schema": "sarvam-jev-shared-check-v1",
+  "model": {
+    "source": "sarvamai/sarvam-1",
+    "revision": "unpinned-local-development",
+    "dtype": "bfloat16",
+    "device": "cuda:0",
+    "torch_version": "2.10.0+cu128",
+    "transformers_version": "5.17.0"
+  },
+  "fixture": {
+    "path": "reference/openjev/benchmarks/data/authored144.jsonl",
+    "groups": 36,
+    "decisions": 72
+  },
+  "prompt": {
+    "style": "completion",
+    "shots": 3
+  },
+  "group_sizes": {
+    "min": 2,
+    "max": 2,
+    "median": 2.0
+  },
+  "agreement": {
+    "argmax_agreement": "64/72",
+    "argmax_agreement_rate": 0.8888888888888888,
+    "max_probability_drift": 0.0624091926630958,
+    "median_probability_drift": 0.031121099785924054
+  },
+  "throughput": {
+    "fresh_seconds": 7.385684601000321,
+    "shared_seconds": 5.025596037002288,
+    "fresh_decisions_per_second": 9.748588504611783,
+    "shared_decisions_per_second": 14.326658861930177,
+    "overall_speedup": 1.4696136630603123,
+    "median_group_speedup": 1.4536587934815604
+  },
+  "note": "BF16 batching is not bit-exact; drift between paths is expected and measured, not assumed away."
+}

@@ -1,0 +1,58 @@
+{
+  "schema": "sarvam-jev-phase0-v1",
+  "model": {
+    "source": "sarvamai/sarvam-1",
+    "revision": "unpinned-local-development",
+    "dtype": "bfloat16",
+    "device": "cuda:0",
+    "torch_version": "2.10.0+cu128",
+    "transformers_version": "5.17.0"
+  },
+  "fixture": {
+    "path": "reference/openjev/benchmarks/data/authored144.jsonl",
+    "rows": 144
+  },
+  "prompt": {
+    "style": "completion",
+    "shots": 0,
+    "version": "sarvam-jev-letters-v1"
+  },
+  "quality": {
+    "n": 144,
+    "accuracy": 0.5208333333333334,
+    "mean_family_balanced_accuracy": 0.49029518240044556,
+    "chance_balanced_accuracy": 0.3333333333333333,
+    "family_results": {
+      "candidate_selection": {
+        "n": 48,
+        "accuracy": 0.4583333333333333,
+        "balanced_accuracy": 0.44152046783625726,
+        "macro_f1": 0.37428501245745166
+      },
+      "evidence_interpretation": {
+        "n": 48,
+        "accuracy": 0.5208333333333334,
+        "balanced_accuracy": 0.4682539682539682,
+        "macro_f1": 0.40158730158730166
+      },
+      "rule_application": {
+        "n": 48,
+        "accuracy": 0.5833333333333334,
+        "balanced_accuracy": 0.5611111111111111,
+        "macro_f1": 0.5621178021778171
+      }
+    }
+  },
+  "diagnostics": {
+    "median_allowed_token_mass": 0.9939605593681335,
+    "min_allowed_token_mass": 0.9817586541175842,
+    "answer_separator": " ",
+    "median_input_tokens": 128.0
+  },
+  "timing": {
+    "wall_seconds": 7.431071874000281,
+    "decisions_per_second": 19.378092749153048,
+    "median_forward_seconds": 0.04109361049972904
+  },
+  "probability_status": "conditional option score; uncalibrated as decision confidence"
+}

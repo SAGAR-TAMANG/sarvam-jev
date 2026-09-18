@@ -1,0 +1,85 @@
+{
+  "schema": "sarvam-jev-phase0-summary-v1",
+  "date": "2026-09-18",
+  "claim": "The letter-slot readout and the shared-state path both work correctly on sarvam-1, but a 2B base model is not a usable zero-shot decision model: it clears chance by a wide margin and falls well short of instruction-tuned models of the same size. Decision-semantics training is required, not optional.",
+  "model": {
+    "source": "sarvamai/sarvam-1",
+    "revision": "unpinned-local-development",
+    "dtype": "bfloat16",
+    "device": "cuda:0",
+    "torch_version": "2.10.0+cu128",
+    "transformers_version": "5.17.0"
+  },
+  "fixture": {
+    "path": "reference/openjev/benchmarks/data/authored144.jsonl",
+    "rows": 144
+  },
+  "quality": {
+    "mean_family_balanced_accuracy": {
+      "sarvam_1_completion_3shot": 0.5157689976575425,
+      "sarvam_1_completion_0shot": 0.49029518240044556,
+      "sarvam_1_completion_1shot": 0.46997395449407836,
+      "sarvam_1_chat_template_3shot": 0.40428767998427445,
+      "chance": 0.3333333333333333
+    },
+    "family_results": {
+      "candidate_selection": {
+        "n": 48,
+        "accuracy": 0.4583333333333333,
+        "balanced_accuracy": 0.4393704850361197,
+        "macro_f1": 0.4442268461852305
+      },
+      "evidence_interpretation": {
+        "n": 48,
+        "accuracy": 0.6458333333333334,
+        "balanced_accuracy": 0.6555555555555556,
+        "macro_f1": 0.633857182244279
+      },
+      "rule_application": {
+        "n": 48,
+        "accuracy": 0.5208333333333334,
+        "balanced_accuracy": 0.45238095238095233,
+        "macro_f1": 0.43883735312306743
+      }
+    },
+    "published_reference_ladder": {
+      "note": "openjev phase 1, same fixture and metric, native BF16",
+      "qwen3_0.6b": 0.44,
+      "minicpm5_2b": 0.686,
+      "qwen3.5_4b": 0.813
+    }
+  },
+  "readout_health": {
+    "median_allowed_token_mass": 0.9975958466529846,
+    "answer_separator": " ",
+    "note": "Share of full-vocabulary probability mass landing on the answer-letter slots."
+  },
+  "shared_state_path": {
+    "argmax_agreement_rate": 0.8888888888888888,
+    "max_probability_drift": 0.0624091926630958,
+    "overall_speedup": 1.4696136630603123,
+    "precision_control": {
+      "bfloat16": {
+        "max_abs_logit_delta": 0.25,
+        "max_abs_probability_delta": 0.060562
+      },
+      "float32": {
+        "max_abs_logit_delta": 8e-05,
+        "max_abs_probability_delta": 2.1e-05
+      },
+      "note": "Split prefill vs single forward, M=1, no batching or padding. The fp32 collapse shows the shared path is mathematically correct; the bf16 drift flips argmaxes here only because sarvam-1 sits near-indifferent between options, unlike the confident 4B model openjev measured."
+    }
+  },
+  "demo_ui_hindi_preset": {
+    "criteria": 5,
+    "fresh_ms": 1489,
+    "shared_ms": 280,
+    "speedup": 5.31,
+    "prompt_tokens": {
+      "fresh": 2521,
+      "shared": 737
+    },
+    "argmax_agreement": "5/5"
+  },
+  "probability_status": "conditional option score; uncalibrated as decision confidence"
+}

@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sarvam-jev"
+version = "0.1.0"
+description = "Generation-free typed decisions on Sarvam Indic models"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "torch==2.10.0",
+  "transformers==5.17.0",
+  "accelerate==1.12.0",
+  "safetensors",
+  "huggingface-hub",
+  "sentencepiece",
+  "protobuf",
+  "numpy",
+]
+
+[project.optional-dependencies]
+serve = ["fastapi", "uvicorn", "pydantic"]
+test = ["pytest"]
+
+[project.scripts]
+sarvam-jev-score = "sarvam_jev.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
